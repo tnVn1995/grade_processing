@@ -1,0 +1,16 @@
+public/img/*
+.idea/*
+.vscode/*
+actualquiz/*
+Ch05/*
+Chapter03/*
+Formulas/*
+quiz1/*
+samplequizzes/*
+*.xls
+*.xlsx
+*.csv
+*.docx
+*.pdf
+*.ppt
+/processedquiz1/*
