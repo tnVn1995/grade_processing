@@ -32,7 +32,12 @@ args = vars(ap.parse_args())
 
 print(f"Starting to process file {args['filename']} ...")
 
-
+#%%
+# file_name = r'C:\Users\ngu09790\Downloads\Intro to Stat\class_roster.xlsx'
+# lastname = 'Moskal'
+# firstname = 'Kaylynne'
+# quiz = 'ec2'
+# grade = 5
 def update_grades(file_name: str, lastname: str = None, firstname: str = None,
                   R_no: str = None, quiz: str = None, grade: int = None) -> pd.DataFrame:
     """This function takes as input the student's first, last name,
@@ -54,12 +59,12 @@ def update_grades(file_name: str, lastname: str = None, firstname: str = None,
     if quiz in student_grade.columns:
         pass
     else:
-        student_grade[quiz] = None
+        student_grade[quiz] = [0]*student_grade.shape[0]
     try:
         if lastname and firstname:
             cond1 = student_grade['Last Name'] == lastname
             cond2 = student_grade['First Name'] == firstname
-            print(f"Update {firstname + lastname}'s score to gradebook...")
+            print(f"Update {firstname} {lastname}'s score to gradebook...")
             student_grade.loc[(cond1) & (cond2), quiz] = float(grade)
         elif R_no:
             R = 'R' + str(R_no)
@@ -70,8 +75,13 @@ def update_grades(file_name: str, lastname: str = None, firstname: str = None,
         print(e)
     return student_grade
 
+# df = update_grades(file_name=file_name, lastname=lastname, firstname=firstname, quiz=quiz, grade=grade)
+# cond1 = df['Last Name'] == lastname
+# cond2 = df['First Name'] == firstname    
+# display(df.loc[(cond1) & (cond2), ['First Name','Last Name','ec2']])
+#%%
 
-def info(file_path: str, R: bool=True) -> str:
+def info(file_path: str, R: bool=True, lastname=args['lastname'],firstname=args['firstname']) -> str:
     """[show the grades updated of the student ]
     
     Arguments:
@@ -90,9 +100,17 @@ def info(file_path: str, R: bool=True) -> str:
         print(data.dropna(subset=[args['column']]))
         print('the updated score is ..')
         print(data.loc[data['Student ID'] == 'R' + args['R#'], ['First Name', 'Last Name', args['column']]])
+        print('==='*30)
+        print(data.loc[data[args['column']] != 0, ['Last Name', 'First Name', args['column']]])
     else:
         print(data.dropna(subset=[args['column']]))
-        print(update.loc[(cond1) & (cond2), ['Last Name', 'First Name', args['column']]])
+        cond1 = data['Last Name'] == lastname
+        cond2 = data['First Name'] == firstname
+        print(data.loc[(cond1) & (cond2), ['Last Name', 'First Name', args['column']]])
+        print(data.loc[data[args['column']] != 0, ['Last Name', 'First Name', args['column']]])
+        print('==='*30)
+
+#%%
 def main():
     if args['lastname'] and args['firstname']:
         print('last name and first name added')
@@ -102,6 +120,8 @@ def main():
         print('nothing added')
     file_path = Path(args['filesave'])
     # file_path.mkdir(parents=True, exist_ok=True)
+    filename = Path(args['filename'])
+    # file_path.mkdir(parents=True, exist_ok=True)
     if args['lastname'] and args['firstname']:
         update = update_grades(args['filename'],
                                lastname=args['lastname'],
@@ -110,32 +130,33 @@ def main():
                                grade=args['grade'])
         cond1 = update['Last Name'] == args['lastname']
         cond2 = update['First Name'] == args['firstname']
-        update.to_excel(file_path / args['filename'], index=None, header=True)
-        info(file_path / args['filename'], R=False)
+        update.to_excel(str(file_path) , index=None, header=True)
         print('The updated score is ..')
+        info(file_path=file_path , R=False)
     elif args['R#']:
         update = update_grades(args['filename'],
                                R_no=args['R#'],
                                quiz=args['column'],
                                grade=args['grade'])
-        update.to_excel(file_path / args['filename'], index=None, header=True)
-        info(file_path / args['filename'])
+        update.to_excel(str(file_path) , index=None, header=True)
+        info(file_path=file_path )
 #%% fixing errors
-import pandas as pd
-import os
-file = r'C:\Users\ngu09790\Downloads\Intro to Stat\codes_hist_to_correct.txt'
-data = pd.read_csv(file,header=None)
-test = []
-for idx, val in enumerate(data.values):
-    test.append(val)
-for val in test:
-    val = val[0].strip()
-    val = val.split(' ')
-    val.pop(0)
-    val[3] = './class_roster.xlsx'
-    val[5] = './'
-    command = ' '.join(val)
-    print(command)
+# import pandas as pd
+# import os
+# file = r'C:\Users\ngu09790\Downloads\Intro to Stat\codes_hist_to_correct.txt'
+# data = pd.read_csv(file,header=None)
+# test = []
+# for idx, val in enumerate(data.values):
+#     test.append(val)
+# for val in test:
+#     val = val[0].strip()
+#     val = val.split(' ')
+#     val.pop(0)
+#     val[3] = './class_roster.xlsx'
+#     val[5] = './'
+#     command = ' '.join(val)
+#     print(command)
+#%%
 if __name__ == "__main__":
         main()
 
